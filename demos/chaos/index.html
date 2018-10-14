@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="chaos">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Check the console - chaos there since we use all the middlewares! :)</p></div>
+      <div>
+        <p>Value is <span id="num"></span></p>
+<button id="incbtn">Increase</button>
+<span> by </span>
+<input type="number" id="amount" value=1 />
+<p>Observe logs in console!</p>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='actionCreators_js'>actionCreators.js</div><div data-file='index_html'>index.html</div><div data-file='middlewares_js'>middlewares.js</div><div data-file='store_js'>store.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> { store } <span class="hljs-keyword">from</span> <span class="hljs-string">'./store'</span>;
+
+<span class="hljs-keyword">import</span> { boundActionCreators } <span class="hljs-keyword">from</span> <span class="hljs-string">'./actionCreators'</span>;
+
+<span class="hljs-keyword">let</span> updateUI = <span class="hljs-function">(<span class="hljs-params">state</span>)=&gt;</span> {
+  <span class="hljs-keyword">let</span> element = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"num"</span>);
+  element.innerText = state.count;
+};
+
+<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"incbtn"</span>).addEventListener(<span class="hljs-string">"click"</span>, ()=&gt; {
+  <span class="hljs-keyword">let</span> input = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"amount"</span>);
+  <span class="hljs-keyword">let</span> increase = <span class="hljs-built_in">parseInt</span>(input.value);
+  boundActionCreators.increment(increase);
+});
+
+store.subscribe(<span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span> {
+  updateUI(store.getState());
+});
+updateUI(store.getState());
+</code></pre><pre id='actionCreators_js-source'><code><span class="hljs-keyword">import</span> {bindActionCreators} <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+
+<span class="hljs-keyword">import</span> {store} <span class="hljs-keyword">from</span> <span class="hljs-string">'./store'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> actionCreators = {
+  increment(int) {
+    <span class="hljs-keyword">return</span> {<span class="hljs-attr">type</span>: <span class="hljs-string">'INCREMENT'</span>, <span class="hljs-attr">by</span>: int};
+  }
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> boundActionCreators = bindActionCreators(
+  actionCreators,
+  store.dispatch
+);
+</code></pre><pre id='index_html-source'><code><span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Value is <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"num"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"incbtn"</span>&gt;</span>Increase<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span> by <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"number"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"amount"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">1</span> /&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Observe logs in console!<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></code></pre><pre id='middlewares_js-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> deaf = <span class="hljs-function"><span class="hljs-params">middlewareAPI</span> =&gt;</span> {
+  <span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-params">next</span> =&gt;</span> action =&gt; {
+    <span class="hljs-keyword">if</span> (!(i++%<span class="hljs-number">3</span>)) {
+      next(action);
+    }
+  };
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> nervous = <span class="hljs-function"><span class="hljs-params">middlewareAPI</span> =&gt;</span> next =&gt; <span class="hljs-function"><span class="hljs-params">action</span> =&gt;</span> {
+  next(action);
+  next(action);
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> impatient = <span class="hljs-function"><span class="hljs-params">middlewareAPI</span> =&gt;</span> next =&gt; <span class="hljs-function"><span class="hljs-params">action</span> =&gt;</span> {
+  action = <span class="hljs-built_in">Object</span>.assign({},action); <span class="hljs-comment">// copy</span>
+  action.by *= <span class="hljs-number">5</span>;
+  next(action);
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> logger = <span class="hljs-function"><span class="hljs-params">middlewareAPI</span> =&gt;</span> next =&gt; <span class="hljs-function"><span class="hljs-params">action</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Dispatching action:"</span>,action);
+  <span class="hljs-keyword">let</span> result = next(action);
+  <span class="hljs-keyword">let</span> newstate = middlewareAPI.getState();
+  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"State after dispatch:"</span>,newstate);
+  <span class="hljs-keyword">return</span> result;
+};
+</code></pre><pre id='store_js-source'><code><span class="hljs-keyword">import</span> { createStore, applyMiddleware } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+
+<span class="hljs-keyword">import</span> { deaf, nervous, impatient, logger } <span class="hljs-keyword">from</span> <span class="hljs-string">'./middlewares'</span>;
+
+<span class="hljs-keyword">let</span> initialstate = {<span class="hljs-attr">count</span>: <span class="hljs-number">0</span>};
+
+<span class="hljs-keyword">let</span> reducer = <span class="hljs-function">(<span class="hljs-params">state,action</span>)=&gt;</span> {
+  <span class="hljs-keyword">switch</span>(action.type){
+  <span class="hljs-keyword">case</span> <span class="hljs-string">'INCREMENT'</span>: <span class="hljs-keyword">return</span> {<span class="hljs-attr">count</span>: state.count + action.by};
+  <span class="hljs-keyword">default</span>: <span class="hljs-keyword">return</span> state;
+  }
+};
+
+<span class="hljs-keyword">const</span> middlewares = applyMiddleware(deaf, nervous, impatient, logger);
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> store = createStore(reducer, initialstate, middlewares);
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

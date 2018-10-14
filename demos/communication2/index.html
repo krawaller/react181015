@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body data-demoid="communication2">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Another example demoing communication between parent and child.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='multichoice_js'>multichoice.js</div><div data-file='poll_js'>poll.js</div><div data-file='styles_css'>styles.css</div><div data-file='survey_js'>survey.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Survey} <span class="hljs-keyword">from</span> <span class="hljs-string">'./survey'</span>;
+<span class="hljs-keyword">import</span> {pollData} <span class="hljs-keyword">from</span> <span class="hljs-string">'./poll'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Survey</span> <span class="hljs-attr">pollData</span>=<span class="hljs-string">{pollData}/</span>&gt;</span>,
+  document.getElementById("app")
+);
+</span></code></pre><pre id='multichoice_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Multichoice = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> {
+  <span class="hljs-keyword">let</span> options = props.options.map(<span class="hljs-function">(<span class="hljs-params">o,n</span>)=&gt;</span> {
+    <span class="hljs-keyword">let</span> active = props.current === n+<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">let</span> chooseOption = <span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span> props.callback(active ? <span class="hljs-number">0</span> : n+<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">let</span> cls = active ? <span class="hljs-string">'chosen'</span> : <span class="hljs-string">''</span>;
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{n}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">{cls}</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{chooseOption}</span>&gt;</span>{o}<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span>;
+  });
+  <span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"poll"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h4</span>&gt;</span>{props.title}<span class="hljs-tag">&lt;/<span class="hljs-name">h4</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>{options}<span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  );
+};
+</code></pre><pre id='poll_js-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> pollData = {
+  <span class="hljs-string">"Favourite drink"</span>: [<span class="hljs-string">"Milk"</span>,<span class="hljs-string">"Beer"</span>,<span class="hljs-string">"Water"</span>],
+  <span class="hljs-string">"Preferred ToD"</span>: [<span class="hljs-string">"Morning"</span>,<span class="hljs-string">"Noon"</span>,<span class="hljs-string">"Evening"</span>,<span class="hljs-string">"Night"</span>],
+  <span class="hljs-string">"Pastime"</span>: [<span class="hljs-string">"Football"</span>,<span class="hljs-string">"Dungeons &amp; Dragons"</span>,<span class="hljs-string">"Playing house"</span>],
+  <span class="hljs-string">"Who's the king?"</span>: [<span class="hljs-string">"Elvis Presley"</span>,<span class="hljs-string">"Bruce Springsteen"</span>,<span class="hljs-string">"James Hetfield"</span>]
+};
+</code></pre><pre id='styles_css-source'><code><span class="hljs-selector-class">.poll</span> {
+	<span class="hljs-attribute">background-color</span>: <span class="hljs-number">#DDD</span>;
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">1em</span>;
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">1em</span>;
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">5px</span>;
+}
+
+<span class="hljs-selector-class">.poll</span> <span class="hljs-selector-tag">li</span> {
+  <span class="hljs-attribute">cursor</span>: pointer;
+}
+
+<span class="hljs-selector-class">.poll</span> <span class="hljs-selector-tag">li</span><span class="hljs-selector-pseudo">:hover</span> {
+  <span class="hljs-attribute">background-color</span>: yellow;
+}
+
+<span class="hljs-selector-class">.poll</span> <span class="hljs-selector-tag">li</span><span class="hljs-selector-class">.chosen</span> {
+	<span class="hljs-attribute">background-color</span>: green;
+	<span class="hljs-attribute">color</span>: white;
+}
+
+<span class="hljs-selector-class">.survey</span><span class="hljs-selector-pseudo">:after</span> {
+	<span class="hljs-attribute">content</span>: <span class="hljs-string">" "</span>;
+	<span class="hljs-attribute">display</span>: block;
+	<span class="hljs-attribute">clear</span>: both;
+}</code></pre><pre id='survey_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Multichoice} <span class="hljs-keyword">from</span> <span class="hljs-string">'./multichoice'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Survey</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {};
+  }
+  select(title,optionnumber) {
+    <span class="hljs-comment">// note the dynamic key!</span>
+    <span class="hljs-keyword">this</span>.setState({[title]:optionnumber});
+  }
+  render() {
+    <span class="hljs-keyword">let</span> polls = [];
+    <span class="hljs-keyword">let</span> choices = [];
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> title <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.props.pollData){
+      <span class="hljs-keyword">let</span> options = <span class="hljs-keyword">this</span>.props.pollData[title];
+      <span class="hljs-keyword">let</span> current = <span class="hljs-keyword">this</span>.state[title] || <span class="hljs-number">0</span>;
+      choices.push(current);
+      <span class="hljs-comment">// currying with title, so callback only needs optionnumber</span>
+      <span class="hljs-keyword">let</span> callback = <span class="hljs-keyword">this</span>.select.bind(<span class="hljs-keyword">this</span>,title);
+      polls.push(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Multichoice</span>
+        <span class="hljs-attr">callback</span>=<span class="hljs-string">{callback}</span>
+        <span class="hljs-attr">title</span>=<span class="hljs-string">{title}</span>
+        <span class="hljs-attr">options</span>=<span class="hljs-string">{options}</span>
+        <span class="hljs-attr">current</span>=<span class="hljs-string">{current}</span>
+        <span class="hljs-attr">key</span>=<span class="hljs-string">{title}</span>
+      /&gt;</span>);
+    }
+    return <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"survey"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Your opinion matters<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>
+        Let us know your thoughts by clicking your preferred options!
+        ({choices.join(",")})
+      <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+      {polls}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>;
+  }
+}
+</span></code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

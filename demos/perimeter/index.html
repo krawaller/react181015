@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="perimeter">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Showing off the <a href="https://github.com/aweary/react-perimeter">React-Perimeter</a> component.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='screen_js'>screen.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+<span class="hljs-keyword">import</span> { Screen } <span class="hljs-keyword">from</span> <span class="hljs-string">'./screen'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Screen</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='screen_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> Perimeter <span class="hljs-keyword">from</span> <span class="hljs-string">'react-perimeter'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Screen</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">alarm</span>: <span class="hljs-literal">false</span>};
+  }
+  render(){
+    <span class="hljs-keyword">let</span> alarmStyle = {<span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">'red'</span>, <span class="hljs-attr">color</span>: <span class="hljs-string">'white'</span>};
+
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{this.state.alarm</span> ? <span class="hljs-attr">alarmStyle</span> <span class="hljs-attr">:</span> {}}&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Lorem ipsum<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Dolor sit amet<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Perimeter</span> <span class="hljs-attr">onBreach</span>=<span class="hljs-string">{()</span>=&gt;</span>this.setState({alarm:true})} padding={80}&gt;
+          <span class="hljs-tag">&lt;<span class="hljs-name">button</span>&gt;</span>load more<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">Perimeter</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+  }
+}
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  <link rel="stylesheet" href="gang.css"> <link rel="stylesheet" href="hero.css">
+</head>
+
+<body data-demoid="styleable">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating how React-Styleable lets us scope a regular CSS file to a component.</p>
+
+<p>Note that this requires <code>style-loader</code> and <code>css-loader</code> plugins for Webpack, to be able to load the style sheets.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='gang_css'>gang.css</div><div data-file='gang_js'>gang.js</div><div data-file='hero_css'>hero.css</div><div data-file='hero_js'>hero.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> Gang <span class="hljs-keyword">from</span> <span class="hljs-string">'./gang'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Gang</span> <span class="hljs-attr">list</span>=<span class="hljs-string">{[</span>'<span class="hljs-attr">Batman</span>', '<span class="hljs-attr">Superman</span>', '<span class="hljs-attr">Spiderman</span>', '<span class="hljs-attr">He-man</span>']} /&gt;</span>,
+  document.getElementById("app")
+);
+</span></code></pre><pre id='gang_css-source'><code><span class="hljs-selector-class">.container</span> {
+	<span class="hljs-attribute">display</span>: flex;
+	<span class="hljs-attribute">justify-content</span>: space-around;
+}</code></pre><pre id='gang_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactStyleable <span class="hljs-keyword">from</span> <span class="hljs-string">'react-styleable'</span>;
+
+<span class="hljs-keyword">import</span> Hero <span class="hljs-keyword">from</span> <span class="hljs-string">'./hero'</span>;
+
+<span class="hljs-keyword">import</span> css <span class="hljs-keyword">from</span> <span class="hljs-string">'./gang.css'</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Gang</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">mode</span>: <span class="hljs-string">'day'</span>};
+    <span class="hljs-keyword">this</span>.toggle = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+      <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">mode</span>: <span class="hljs-keyword">this</span>.state.mode === <span class="hljs-string">'day'</span> ? <span class="hljs-string">'night'</span> : <span class="hljs-string">'day'</span>});
+    };
+  }
+  render() {
+    <span class="hljs-keyword">const</span> mode = <span class="hljs-keyword">this</span>.state.mode;
+    <span class="hljs-keyword">const</span> heroes = <span class="hljs-keyword">this</span>.props.list.map(<span class="hljs-function">(<span class="hljs-params">t,n</span>)=&gt;</span> (
+      &lt;Hero key={n} mode={mode} text={t}/&gt;
+    ));
+    return &lt;div&gt;
+      &lt;p&gt;
+        &lt;input id='mode' type='checkbox' onChange={this.toggle} checked={mode === 'night'}/&gt;
+        &lt;label htmlFor='mode'&gt;Night mode&lt;/label&gt;
+      &lt;/p&gt;
+      &lt;div className="container"&gt;{heroes}&lt;/div&gt;
+    &lt;/div&gt;;
+  }
+}
+
+export default ReactStyleable(css)(Gang);
+</code></pre><pre id='hero_css-source'><code><span class="hljs-selector-class">.hero</span> {
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">8px</span>;
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">3px</span>;
+	<span class="hljs-attribute">display</span>: flex;
+	<span class="hljs-attribute">justify-content</span>: center;
+	<span class="hljs-attribute">width</span>: <span class="hljs-number">100px</span>;
+	<span class="hljs-attribute">height</span>: <span class="hljs-number">100px</span>;
+	<span class="hljs-attribute">align-items</span>: center;
+	<span class="hljs-attribute">font-weight</span>: bold;
+	<span class="hljs-attribute">transition</span>: color <span class="hljs-number">1s</span>, background-color <span class="hljs-number">1s</span>;
+}
+
+<span class="hljs-selector-class">.day</span> {
+	<span class="hljs-attribute">color</span>: black;
+	<span class="hljs-attribute">background-color</span>: white;
+	<span class="hljs-attribute">border-color</span>: <span class="hljs-number">#AAA</span>;
+}
+
+<span class="hljs-selector-class">.night</span> {
+	<span class="hljs-attribute">color</span>: white;
+	<span class="hljs-attribute">background-color</span>: <span class="hljs-number">#285666</span>;
+	<span class="hljs-attribute">border-color</span>: <span class="hljs-number">#E6B863</span>;
+}</code></pre><pre id='hero_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactStyleable <span class="hljs-keyword">from</span> <span class="hljs-string">'react-styleable'</span>;
+
+<span class="hljs-keyword">import</span> css <span class="hljs-keyword">from</span> <span class="hljs-string">'./hero.css'</span>;
+
+<span class="hljs-keyword">const</span> Hero = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">{</span>"<span class="hljs-attr">hero</span> "+<span class="hljs-attr">props.mode</span>} &gt;</span>{props.text}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> ReactStyleable(css)(Hero);
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

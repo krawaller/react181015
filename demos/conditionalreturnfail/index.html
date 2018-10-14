@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="conditionalreturnfail">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Showing what happens when you naïvely use a number as a boolean to decide whether or not to print something (note the 0)</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='product_js'>product.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Product} <span class="hljs-keyword">from</span> <span class="hljs-string">'./product'</span>;
+
+ReactDOM.render(
+  &lt;div&gt;
+    &lt;Product description="A nice shovel" reviews={[]} /&gt;
+    &lt;hr/&gt;
+    &lt;Product description="A worn hammer" reviews={[1,2,3,4]} /&gt;
+  &lt;/div&gt;,
+  document.getElementById("app")
+);
+</code></pre><pre id='product_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Product = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> {
+  <span class="hljs-keyword">let</span> reviews = props.reviews;
+  <span class="hljs-keyword">let</span> description = props.description;
+  <span class="hljs-keyword">return</span> (
+    <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>{description}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      {reviews.length &amp;&amp; (
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>There are {reviews.length} reviews for you to read!<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      )}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  );
+};
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

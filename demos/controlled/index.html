@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="controlled">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating a form that has the &quot;controlled&quot; approach</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='form_js'>form.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Form} <span class="hljs-keyword">from</span> <span class="hljs-string">'./form'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Form</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='form_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Form</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {
+      <span class="hljs-attr">submittedname</span>: <span class="hljs-string">''</span>,
+      <span class="hljs-attr">fieldname</span>: <span class="hljs-string">''</span>
+    };
+    <span class="hljs-keyword">this</span>.changeName = <span class="hljs-keyword">this</span>.changeName.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.submitName = <span class="hljs-keyword">this</span>.submitName.bind(<span class="hljs-keyword">this</span>);
+  }
+  changeName(e) {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">fieldname</span>: e.target.value });
+  }
+  submitName() {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">submittedname</span>: <span class="hljs-keyword">this</span>.state.fieldname});
+  }
+  render() {
+    <span class="hljs-keyword">let</span> s = <span class="hljs-keyword">this</span>.state;
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">fieldset</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">legend</span>&gt;</span>Enter your name<span class="hljs-tag">&lt;/<span class="hljs-name">legend</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">onChange</span>=<span class="hljs-string">{this.changeName}</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{s.fieldname}</span> /&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.submitName}</span>&gt;</span>Submit!<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">fieldset</span>&gt;</span>
+      {s.submittedname ? 'Is '+s.submittedname+' really your real name?' : 'Who are you?'}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>;
+  }
+}
+</span></code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

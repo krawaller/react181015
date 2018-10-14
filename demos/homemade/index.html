@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="homemade">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating usage of a home-made version of ReactRedux</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='actionCreators_js'>actionCreators.js</div><div data-file='homemade_js'>homemade.js</div><div data-file='quoteform_js'>quoteform.js</div><div data-file='quotelist_js'>quotelist.js</div><div data-file='store_js'>store.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> { Provider } <span class="hljs-keyword">from</span> <span class="hljs-string">'./homemade'</span>;
+<span class="hljs-keyword">import</span> { QuoteListContainer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./quotelist'</span>;
+<span class="hljs-keyword">import</span> { QuoteFormContainer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./quoteform'</span>;
+<span class="hljs-keyword">import</span> { store } <span class="hljs-keyword">from</span> <span class="hljs-string">'./store'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Provider</span> <span class="hljs-attr">store</span>=<span class="hljs-string">{store}</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">QuoteListContainer</span> /&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">QuoteFormContainer</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Provider</span>&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+store.dispatch({<span class="hljs-attr">type</span>:<span class="hljs-string">'BOGUSEVENT'</span>});
+</code></pre><pre id='actionCreators_js-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> actionCreators = {
+  <span class="hljs-attr">addQuote</span>: <span class="hljs-function">(<span class="hljs-params">text</span>)=&gt;</span> ({<span class="hljs-attr">type</span>:<span class="hljs-string">'ADD'</span>,<span class="hljs-attr">text</span>:text}),
+  <span class="hljs-attr">tick</span>: <span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span> ({<span class="hljs-attr">type</span>:<span class="hljs-string">'TICK'</span>})
+};
+</code></pre><pre id='homemade_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> {object} <span class="hljs-keyword">from</span> <span class="hljs-string">'prop-types'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> connect = <span class="hljs-function">(<span class="hljs-params">mapState=(</span>)=&gt;</span><span class="hljs-function">(<span class="hljs-params">{}</span>), <span class="hljs-params">mapDispatch</span>=<span class="hljs-params">()</span>=&gt;</span><span class="hljs-function">(<span class="hljs-params">{}</span>))=&gt;</span> Component=&gt; <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Container</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">childprops</span>:{}};
+  }
+  <span class="hljs-keyword">static</span> get contextTypes(){
+    <span class="hljs-keyword">return</span> { <span class="hljs-attr">store</span>: object };
+  }
+  componentDidMount() {
+    <span class="hljs-keyword">let</span> store = <span class="hljs-keyword">this</span>.context.store;
+    <span class="hljs-keyword">let</span> callback = <span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span> {
+      <span class="hljs-keyword">let</span> childprops = <span class="hljs-built_in">Object</span>.assign(
+        mapState(store.getState()),
+        mapDispatch(store.dispatch),
+        <span class="hljs-keyword">this</span>.props
+      );
+      <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">childprops</span>:childprops});
+    };
+    store.subscribe(callback);
+    callback();
+  }
+  render() {
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Component</span> {<span class="hljs-attr">...this.state.childprops</span>} /&gt;</span>;
+  }
+};
+
+export class Provider extends React.Component {
+  static get childContextTypes(){
+    return { store: object };
+  }
+  getChildContext(){
+    return { store: this.props.store };
+  }
+  render(){
+    return this.props.children;
+  }
+}
+</span></code></pre><pre id='quoteform_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { connect } <span class="hljs-keyword">from</span> <span class="hljs-string">'./homemade'</span>;
+
+<span class="hljs-keyword">import</span> { actionCreators } <span class="hljs-keyword">from</span> <span class="hljs-string">'./actionCreators'</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">QuoteForm</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  submit(e){
+    <span class="hljs-keyword">this</span>.props.callback(<span class="hljs-keyword">this</span>.field.value);
+    <span class="hljs-keyword">this</span>.field.value = <span class="hljs-string">''</span>;
+    e.preventDefault();
+  }
+  render(){
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">{e</span>=&gt;</span> this.submit(e)}&gt;
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">{i</span>=&gt;</span> this.field = i} /&gt;
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">'submit'</span>&gt;</span>Add<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+    );
+  }
+}
+
+function mapDispatchToQuoteFormProps(dispatch) {
+  return {
+    callback(txt) {
+      dispatch(actionCreators.addQuote(txt));
+    }
+  };
+}
+
+export const QuoteFormContainer = connect(
+  undefined,
+  mapDispatchToQuoteFormProps,
+)(QuoteForm);
+</span></code></pre><pre id='quotelist_js-source'><code>import React from 'react';
+
+import { connect } from './homemade';
+
+const QuoteList = (props)=&gt; {
+  let list = (props.quotes || []).map((q,n)=&gt; &lt;li key={n}&gt;{q}&lt;/li&gt;);
+  return (
+    &lt;div className="quoteslist"&gt;
+      &lt;h3&gt;Words of Wisdom&lt;/h3&gt;
+      &lt;ul&gt;{list}&lt;/ul&gt;
+    &lt;/div&gt;
+  );
+};
+
+function mapStateToQuoteListProps(state) {
+  return {quotes: state.quotes};
+}
+
+export const QuoteListContainer = connect(
+  mapStateToQuoteListProps
+)(QuoteList);
+</code></pre><pre id='store_js-source'><code><span class="hljs-keyword">import</span> { createStore } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+
+<span class="hljs-keyword">const</span> initialstate = {
+  <span class="hljs-attr">quotes</span>: [<span class="hljs-string">'Carpe diem'</span>]
+};
+
+<span class="hljs-keyword">const</span> reducer = <span class="hljs-function">(<span class="hljs-params">state,action</span>)=&gt;</span> {
+  <span class="hljs-keyword">switch</span>(action.type){
+  <span class="hljs-keyword">case</span> <span class="hljs-string">'ADD'</span>: <span class="hljs-keyword">return</span> {
+    ...state, <span class="hljs-comment">// not really needed since we have only 1 state key</span>
+    quotes: [...state.quotes, action.text]
+  };
+  <span class="hljs-keyword">default</span>: <span class="hljs-keyword">return</span> state;
+  }
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> store = createStore(reducer, initialstate);
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

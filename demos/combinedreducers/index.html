@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body data-demoid="combinedreducers">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Showing how we can have several sub-reducers</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='actionCreators_js'>actionCreators.js</div><div data-file='footer_js'>footer.js</div><div data-file='quoteform_js'>quoteform.js</div><div data-file='quotelist_js'>quotelist.js</div><div data-file='store_js'>store.js</div><div data-file='styles_css'>styles.css</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+<span class="hljs-keyword">import</span> { Provider } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-redux'</span>;
+
+<span class="hljs-keyword">import</span> { QuoteListContainer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./quotelist'</span>;
+<span class="hljs-keyword">import</span> { QuoteFormContainer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./quoteform'</span>;
+<span class="hljs-keyword">import</span> { FooterContainer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./footer'</span>;
+<span class="hljs-keyword">import</span> { store } <span class="hljs-keyword">from</span> <span class="hljs-string">'./store'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Provider</span> <span class="hljs-attr">store</span>=<span class="hljs-string">{store}</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">QuoteListContainer</span> /&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">QuoteFormContainer</span> /&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">FooterContainer</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Provider</span>&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+store.dispatch({<span class="hljs-attr">type</span>:<span class="hljs-string">'BOGUSEVENT'</span>});
+</code></pre><pre id='actionCreators_js-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> actionCreators = {
+  <span class="hljs-attr">addQuote</span>: <span class="hljs-function">(<span class="hljs-params">text</span>)=&gt;</span> ({<span class="hljs-attr">type</span>:<span class="hljs-string">'ADD'</span>,<span class="hljs-attr">text</span>:text}),
+  <span class="hljs-attr">tick</span>: <span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span> ({<span class="hljs-attr">type</span>:<span class="hljs-string">'TICK'</span>})
+};
+</code></pre><pre id='footer_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { connect } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-redux'</span>;
+<span class="hljs-keyword">import</span> { actionCreators } <span class="hljs-keyword">from</span> <span class="hljs-string">'./actionCreators'</span>;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mapStateToFooterProps</span>(<span class="hljs-params">state</span>) </span>{
+  <span class="hljs-keyword">return</span> {<span class="hljs-attr">time</span>: state.time};
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Footer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  componentDidMount() {
+    setInterval(<span class="hljs-keyword">this</span>.props.tick,<span class="hljs-number">1000</span>);
+  }
+  render() {
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"footer"</span>&gt;</span>
+        App has been running for {this.props.time} seconds
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+  }
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> FooterContainer = connect(
+  mapStateToFooterProps,
+  {<span class="hljs-attr">tick</span>: actionCreators.tick}
+)(Footer);
+</code></pre><pre id='quoteform_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { connect } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-redux'</span>;
+
+<span class="hljs-keyword">import</span> { actionCreators } <span class="hljs-keyword">from</span> <span class="hljs-string">'./actionCreators'</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">QuoteForm</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  submit(e){
+    <span class="hljs-keyword">this</span>.props.callback(<span class="hljs-keyword">this</span>.field.value);
+    <span class="hljs-keyword">this</span>.field.value = <span class="hljs-string">''</span>;
+    e.preventDefault();
+  }
+  render(){
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">{e</span>=&gt;</span> this.submit(e)}&gt;
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">{i</span>=&gt;</span> this.field = i} /&gt;
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">'submit'</span>&gt;</span>Add<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+    );
+  }
+}
+
+export const QuoteFormContainer = connect(
+  null,
+  {callback: actionCreators.addQuote}
+)(QuoteForm);
+</span></code></pre><pre id='quotelist_js-source'><code>import React from 'react';
+
+import { connect } from 'react-redux';
+
+const QuoteList = (props)=&gt; {
+  let list = props.quotes.map((q,n)=&gt; &lt;li key={n}&gt;{q}&lt;/li&gt;);
+  return (
+    &lt;div className="quoteslist"&gt;
+      &lt;h3&gt;Words of Wisdom&lt;/h3&gt;
+      &lt;ul&gt;{list}&lt;/ul&gt;
+    &lt;/div&gt;
+  );
+};
+
+function mapStateToQuoteListProps(state) {
+  return {quotes: state.quotes};
+}
+
+export const QuoteListContainer = connect(
+  mapStateToQuoteListProps
+)(QuoteList);
+</code></pre><pre id='store_js-source'><code><span class="hljs-keyword">import</span> { combineReducers, createStore } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+
+<span class="hljs-keyword">const</span> initialstate = {
+  <span class="hljs-attr">quotes</span>: [<span class="hljs-string">'Carpe diem'</span>],
+  <span class="hljs-attr">time</span>: <span class="hljs-number">0</span>
+};
+
+<span class="hljs-comment">// will only operate on state.quotes</span>
+<span class="hljs-keyword">const</span> quotesReducer = <span class="hljs-function">(<span class="hljs-params">state,action</span>)=&gt;</span> {
+  <span class="hljs-keyword">switch</span>(action.type){
+  <span class="hljs-keyword">case</span> <span class="hljs-string">'ADD'</span>: <span class="hljs-keyword">return</span> [...state, action.text];
+  <span class="hljs-keyword">default</span>: <span class="hljs-keyword">return</span> state || initialstate.quotes;
+  }
+};
+
+<span class="hljs-comment">// will only operate on state.time</span>
+<span class="hljs-keyword">const</span> timeReducer = <span class="hljs-function">(<span class="hljs-params">state,action</span>)=&gt;</span> {
+  <span class="hljs-keyword">switch</span>(action.type){
+  <span class="hljs-keyword">case</span> <span class="hljs-string">'TICK'</span>: <span class="hljs-keyword">return</span> state + <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">default</span>: <span class="hljs-keyword">return</span> state || initialstate.time;
+  }
+};
+
+<span class="hljs-keyword">const</span> reducer = combineReducers({
+  <span class="hljs-attr">quotes</span>: quotesReducer,
+  <span class="hljs-attr">time</span>: timeReducer
+});
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> store = createStore(reducer);
+</code></pre><pre id='styles_css-source'><code><span class="hljs-selector-id">#app</span> <span class="hljs-selector-tag">div</span><span class="hljs-selector-class">.footer</span> {
+  <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">1em</span>;
+}</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

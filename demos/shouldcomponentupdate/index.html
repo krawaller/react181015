@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="shouldcomponentupdate">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating the <code>ShouldComponentUpdate</code> lifecycle method.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='child_js'>child.js</div><div data-file='parent_js'>parent.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Parent} <span class="hljs-keyword">from</span> <span class="hljs-string">'./parent'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Parent</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='child_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Child</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  shouldComponentUpdate() {
+    <span class="hljs-keyword">return</span> !<span class="hljs-keyword">this</span>.props.petrified;
+  }
+  render() {
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Latest child render: {this.props.timestamp}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+  }
+}
+</code></pre><pre id='parent_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Child} <span class="hljs-keyword">from</span> <span class="hljs-string">'./child'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Parent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">petrifyChild</span>: <span class="hljs-literal">false</span>};
+    <span class="hljs-keyword">this</span>.togglePetrifyChild = <span class="hljs-keyword">this</span>.togglePetrifyChild.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.rerender = <span class="hljs-keyword">this</span>.rerender.bind(<span class="hljs-keyword">this</span>);
+  }
+  togglePetrifyChild() {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">petrifyChild</span>: !<span class="hljs-keyword">this</span>.state.petrifyChild});
+  }
+  rerender() {
+    <span class="hljs-keyword">this</span>.forceUpdate();
+  }
+  render() {
+    <span class="hljs-keyword">let</span> timestamp = (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()).toString().substr(<span class="hljs-number">16</span>, <span class="hljs-number">8</span>);
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+        &lt;button onClick={this.rerender}&gt;Re-render&lt;/button&gt; &lt;br/&gt;
+        &lt;label&gt;
+          Petrify child:
+          &lt;input
+            type="checkbox"
+            onChange={this.togglePetrifyChild}
+            value={this.state.petrifyChild} /&gt;
+        &lt;/label&gt; &lt;br/&gt;
+        &lt;div&gt;Latest parent render: {timestamp}&lt;/div&gt;
+        &lt;hr/&gt;
+        &lt;Child
+          petrified={this.state.petrifyChild}
+          timestamp={timestamp} /&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

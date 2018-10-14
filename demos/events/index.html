@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body data-demoid="events">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating how to catch DOM events</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='clickableword_js'>clickableword.js</div><div data-file='hover_js'>hover.js</div><div data-file='styles_css'>styles.css</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {ClickableWord} <span class="hljs-keyword">from</span> <span class="hljs-string">'./clickableword'</span>;
+<span class="hljs-keyword">import</span> {Hover} <span class="hljs-keyword">from</span> <span class="hljs-string">'./hover'</span>;
+
+ReactDOM.render(
+  &lt;div&gt;
+    &lt;ClickableWord word="Hello"/&gt;
+    &lt;ClickableWord word="World!"/&gt;
+    &lt;Hover/&gt;
+  &lt;/div&gt;,
+  document.getElementById("app")
+);
+</code></pre><pre id='clickableword_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> ClickableWord = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> {
+  <span class="hljs-keyword">let</span> clickHandler = <span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span> {
+    alert(<span class="hljs-string">"You clicked "</span>+props.word+<span class="hljs-string">"!"</span>);
+  };
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"word"</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{clickHandler}</span>&gt;</span>{props.word}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>;
+};
+</code></pre><pre id='hover_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Hover</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {};
+  }
+  render() {
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>
+      <span class="hljs-attr">className</span>=<span class="hljs-string">{</span>"<span class="hljs-attr">hover</span> "+(<span class="hljs-attr">this.state.hover</span> ? "<span class="hljs-attr">active</span>" <span class="hljs-attr">:</span> "")}
+      <span class="hljs-attr">onMouseEnter</span>=<span class="hljs-string">{()</span> =&gt;</span> this.setState({hover:true})}
+      onMouseLeave={() =&gt; this.setState({hover:false})}
+    &gt;Hover over me!<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+  }
+}
+</code></pre><pre id='styles_css-source'><code><span class="hljs-selector-class">.word</span> {
+  <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid <span class="hljs-number">#AAA</span>;
+  <span class="hljs-attribute">margin-right</span>: <span class="hljs-number">1em</span>;
+}
+<span class="hljs-selector-class">.hover</span> {
+  <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">1em</span>;
+  <span class="hljs-attribute">height</span>: <span class="hljs-number">120px</span>;
+  <span class="hljs-attribute">width</span>: <span class="hljs-number">120px</span>;
+  <span class="hljs-attribute">color</span>: white;
+  <span class="hljs-attribute">background-color</span>: green;
+}
+<span class="hljs-selector-class">.hover</span><span class="hljs-selector-class">.active</span> {
+  <span class="hljs-attribute">background-color</span>: red;
+}</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

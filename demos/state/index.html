@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="state">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>A simple app to demonstrate reading and writing to state</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='contest_js'>contest.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> { Contest } <span class="hljs-keyword">from</span> <span class="hljs-string">'./contest'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Contest</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='contest_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Contest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">clicked1</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">clicked2</span>: <span class="hljs-number">0</span>};
+    <span class="hljs-keyword">this</span>.onClick1 = <span class="hljs-keyword">this</span>.onClick1.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.onClick2 = <span class="hljs-keyword">this</span>.onClick2.bind(<span class="hljs-keyword">this</span>);
+  }
+  onClick1() {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">clicked1</span>: <span class="hljs-keyword">this</span>.state.clicked1+<span class="hljs-number">1</span>});
+  }
+  onClick2() {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">clicked2</span>: <span class="hljs-keyword">this</span>.state.clicked2+<span class="hljs-number">1</span>});
+  }
+  render() {
+    <span class="hljs-keyword">let</span> c1 = <span class="hljs-keyword">this</span>.state.clicked1;
+    <span class="hljs-keyword">let</span> c2 = <span class="hljs-keyword">this</span>.state.clicked2;
+    <span class="hljs-keyword">let</span> msg = <span class="hljs-string">"Let the race begin!"</span>;
+    <span class="hljs-keyword">if</span> (c1 &lt; c2){
+      msg = <span class="hljs-string">"Button 2 is in the lead!"</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (c1 &gt; c2) {
+      msg = <span class="hljs-string">"Button 1 is winning!"</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (c1){
+      msg = <span class="hljs-string">"The buttons are tied!"</span>;
+    }
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h4</span>&gt;</span>State demo<span class="hljs-tag">&lt;/<span class="hljs-name">h4</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Clicked button 1: {c1 ||'Never!'}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Clicked button 2: {c2 ||'Never!'}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.onClick1}</span>&gt;</span>Button 1<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.onClick2}</span>&gt;</span>Button 2<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{msg}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+  }
+}
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

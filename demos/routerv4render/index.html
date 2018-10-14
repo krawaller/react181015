@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="routerv4render">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Trying out passing props to a sub component</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='addressbar_js'>addressbar.js</div><div data-file='home_js'>home.js</div><div data-file='navbar_js'>navbar.js</div><div data-file='product_js'>product.js</div><div data-file='products_js'>products.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> { MemoryRouter <span class="hljs-keyword">as</span> Router, Route } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-router-dom'</span>;
+
+<span class="hljs-keyword">import</span> { AddressBarWithRouter } <span class="hljs-keyword">from</span> <span class="hljs-string">'./addressbar'</span>;
+<span class="hljs-keyword">import</span> { Home } <span class="hljs-keyword">from</span> <span class="hljs-string">'./home'</span>;
+<span class="hljs-keyword">import</span> { Products } <span class="hljs-keyword">from</span> <span class="hljs-string">'./products'</span>;
+<span class="hljs-keyword">import</span> { Product } <span class="hljs-keyword">from</span> <span class="hljs-string">'./product'</span>;
+<span class="hljs-keyword">import</span> { NavBar } <span class="hljs-keyword">from</span> <span class="hljs-string">'./navbar'</span>;
+
+<span class="hljs-keyword">const</span> products = [<span class="hljs-string">'lawnmower'</span>, <span class="hljs-string">'hammer'</span>, <span class="hljs-string">'screw driver'</span>];
+
+<span class="hljs-keyword">const</span> App = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  &lt;div&gt;
+    &lt;AddressBarWithRouter/&gt;
+    &lt;NavBar/&gt;
+    &lt;Route exact path="/" component={Home}/&gt;
+    &lt;Route exact path="/products" render={ (props) =&gt; (
+      &lt;Products {...props} products={products}/&gt;
+    )} /&gt;
+    &lt;Route path="/products/:product" component={Product}/&gt;
+  &lt;/div&gt;
+);
+
+ReactDOM.render(
+  &lt;Router&gt;
+    &lt;App/&gt;
+  &lt;/Router&gt;,
+  document.getElementById("app")
+);
+</code></pre><pre id='addressbar_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { withRouter } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-router-dom'</span>;
+
+<span class="hljs-keyword">const</span> AddressBar = <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    Address: <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{props.location.pathname}</span> <span class="hljs-attr">disabled</span>=<span class="hljs-string">"true"</span>/&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">hr</span>/&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+);
+
+export const AddressBarWithRouter = withRouter(AddressBar);
+</span></code></pre><pre id='home_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Home = <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Home<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>
+      This is our awesome home page!
+
+      It's full of all the great content our users expect!
+    <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre><pre id='navbar_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { NavLink } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-router-dom'</span>;
+
+<span class="hljs-keyword">const</span> activeStyle= {
+  <span class="hljs-attr">fontWeight</span>: <span class="hljs-string">'bold'</span>
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> NavBar = <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">React.Fragment</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">exact</span> <span class="hljs-attr">to</span>=<span class="hljs-string">"/"</span> <span class="hljs-attr">activeStyle</span>=<span class="hljs-string">{activeStyle}</span>&gt;</span>Home<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span>{' '}
+    <span class="hljs-tag">&lt;<span class="hljs-name">NavLink</span> <span class="hljs-attr">to</span>=<span class="hljs-string">"/products"</span> <span class="hljs-attr">activeStyle</span>=<span class="hljs-string">{activeStyle}</span>&gt;</span>Products<span class="hljs-tag">&lt;/<span class="hljs-name">NavLink</span>&gt;</span>{' '}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">React.Fragment</span>&gt;</span>
+);
+</span></code></pre><pre id='product_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Product = <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    So you want to buy a {props.match.params.product}, do you?
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre><pre id='products_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { Link } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-router-dom'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Products = <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Products<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+      Here's what we currently have in stock:
+    <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+      {props.products.map((p,n) =&gt; <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{n}</span> &gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Link</span> <span class="hljs-attr">to</span>=<span class="hljs-string">{</span>`/<span class="hljs-attr">products</span>/${<span class="hljs-attr">p</span>}`}&gt;</span>{p}<span class="hljs-tag">&lt;/<span class="hljs-name">Link</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>)}
+    <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

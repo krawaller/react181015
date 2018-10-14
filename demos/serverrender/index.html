@@ -1,0 +1,82 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="serverrender">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating how we can render to a string</p></div>
+      <div>
+        <h4>String</h4>
+<pre id="string"></pre>
+
+<h4>Static markup</h4>
+<pre id="static"></pre>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='greeter_js'>greeter.js</div><div data-file='index_html'>index.html</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> {renderToString, renderToStaticMarkup} <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom/server'</span>;
+
+<span class="hljs-keyword">import</span> { Greeter } <span class="hljs-keyword">from</span> <span class="hljs-string">'./greeter'</span>;
+
+<span class="hljs-keyword">const</span> string = renderToString(&lt;Greeter who="Batman" /&gt;);
+document.getElementById("string").innerText = string;
+
+const staticMarkup = renderToStaticMarkup(&lt;Greeter who="Superman" /&gt;);
+document.getElementById("static").innerText = staticMarkup;
+</code></pre><pre id='greeter_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Greeter = <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> &lt;p&gt;Hello &lt;strong&gt;{props.who}&lt;<span class="hljs-regexp">/strong&gt;!&lt;/</span>p&gt;;
+</code></pre><pre id='index_html-source'><code><span class="hljs-tag">&lt;<span class="hljs-name">h4</span>&gt;</span>String<span class="hljs-tag">&lt;/<span class="hljs-name">h4</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">pre</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"string"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">pre</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">h4</span>&gt;</span>Static markup<span class="hljs-tag">&lt;/<span class="hljs-name">h4</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">pre</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"static"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">pre</span>&gt;</span></code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

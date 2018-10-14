@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="proptypes">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating the (deprecated) propTypes API, which with we can specify what props a component expects.</p>
+
+<p>Note the error in the console coming from forgetting to provide &quot;age&quot; to one of the users.</p>
+
+<p>If we mark a <code>propType</code> with <code>.isRequired</code>, that means the component needs that prop to function. However, the prop may be provided by the parent <em>or</em> <code>defaultProps</code>, it doesn&#39;t matter which.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='post_js'>post.js</div><div data-file='user_js'>user.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {User} <span class="hljs-keyword">from</span> <span class="hljs-string">'./user'</span>;
+<span class="hljs-keyword">import</span> {Post} <span class="hljs-keyword">from</span> <span class="hljs-string">'./post'</span>;
+
+ReactDOM.render(
+  &lt;div&gt;
+    &lt;User name="David" age={36} role="teacher" /&gt;
+    &lt;hr/&gt;
+    &lt;User /&gt;
+    &lt;hr/&gt;
+    &lt;Post title="Words of wisdom" content="Turn the other cheek"/&gt;
+  &lt;/div&gt;,
+  document.getElementById("app")
+);
+</code></pre><pre id='post_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { string } <span class="hljs-keyword">from</span> <span class="hljs-string">'prop-types'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Post</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">static</span> get propTypes(){
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-attr">title</span>: string.isRequired,
+      <span class="hljs-attr">content</span>: string.isRequired
+    };
+  }
+  render() {
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h4</span>&gt;</span>{this.props.title}<span class="hljs-tag">&lt;/<span class="hljs-name">h4</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>{this.props.content}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+  }
+}
+</code></pre><pre id='user_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { string, number, oneOf } <span class="hljs-keyword">from</span> <span class="hljs-string">'prop-types'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> User = <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"user"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Name: {props.name}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Role: {props.role}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+    {props.age &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>Age: {props.age}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span> }
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+
+User.propTypes = {
+  <span class="hljs-attr">name</span>: string,
+  <span class="hljs-attr">age</span>: number.isRequired,
+  <span class="hljs-attr">role</span>: oneOf([<span class="hljs-string">"teacher"</span>,<span class="hljs-string">"participant"</span>,<span class="hljs-string">"other"</span>])
+};
+
+User.defaultProps = {
+  <span class="hljs-attr">name</span>: <span class="hljs-string">"John Doe"</span>,
+  <span class="hljs-attr">role</span>: <span class="hljs-string">"other"</span>
+};
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

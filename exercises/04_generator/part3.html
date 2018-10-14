@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+	<title>Exercise: 04_generator 3</title>
+	<script type="text/javascript" src="../libs/browserassets.js"></script>
+	<script type="text/javascript" src="../libs/babel.js"></script>
+  <script type="text/javascript" src="../libs/jquery.js"></script>
+  <link rel="stylesheet" href="../libs/all.css">
+  <link rel="stylesheet" href="../libs/exercise.css">
+</head>
+<body>
+  <div class='topbar'><div>Edument React course &nbsp;&nbsp;&nbsp;&nbsp;<a href='../'>Exercises</a> - <span>04_generator</span></div></div>
+  <div class="wrapper">
+  <div class="exercise">
+    <div class="instruction">
+<h3>04_GENERATOR 3</h3>
+
+<ul class='partnav'><li class=''><a href='index.html' >Part 1</a></li><li class=''><a href='part2.html' >Part 2</a></li><li class='active'><a href='part3.html' >Part 3</a></li><li class=''><a href='part4.html' >Part 4</a></li></ul>
+
+<p>Now we are going to add a <strong>stamina slider</strong>. As our state already is an object that merely means adding another property, but the code repetition is quickly getting out of hand. </p>
+
+<p>Therefore the time has come to curb that! Instead of adding a third action creator, make a single one that takes the name of the characteristic (strength/intelligence/stamina) and the value. This also means that we now should only have a single action type.</p>
+
+<p>If you have strong jQuery fu, you can earn bonus points by using event delegation to only set a single event handler for all sliders! Additionally, for gymnastics points, make your UI updater function loop over id:s to set the spans instead of touching them individually.</p>
+
+<p><strong>Two more ES6 tricks</strong> that might come in handy now:</p>
+
+<ul><li>if key and value are named the same, we can omit the value: <code>let name = &quot;me&quot;; let obj = {name};</code></li><li>set a dynamic key like this: <code>let propname = &#39;foo&#39;; let obj = {[propname]: 42};</code> </li></ul>
+
+    </div>
+    <div class="apps">
+     <div>
+      <h4>Your version</h4>
+      <div id="target"></div>
+     </div>
+     <div>
+      <h4>Solution</h4>
+      <iframe class="solution" srcdoc="<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>Solution</title>
+  <script type='text/javascript' src='../libs/browserassets.js'></script>
+  <script type='text/javascript' src='../libs/babel.js'></script>
+  <script type='text/javascript' src='../libs/jquery.js'></script>
+</head>
+<body>
+  <div id='target'></div>
+<script type='text/babel' src='solution3.js'></script>
+</body>
+</html>
+"></iframe>
+      </div>
+    </div>
+  </div>
+  </div>
+<script type="text/babel" src="yourcode3.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body data-demoid="nestedcomponents">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating how a React app is built as a pyramid of components</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='advert_js'>advert.js</div><div data-file='article_js'>article.js</div><div data-file='center_js'>center.js</div><div data-file='footer_js'>footer.js</div><div data-file='link_js'>link.js</div><div data-file='main_js'>main.js</div><div data-file='navigation_js'>navigation.js</div><div data-file='sidebar_js'>sidebar.js</div><div data-file='site_js'>site.js</div><div data-file='styles_css'>styles.css</div><div data-file='topbar_js'>topbar.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> { Site } <span class="hljs-keyword">from</span> <span class="hljs-string">'./site'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Site</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='advert_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Advert = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"comp advert"</span>&gt;</span>{props.text}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre><pre id='article_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Article = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"comp articleitem"</span>&gt;</span>{props.text}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre><pre id='center_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Article} <span class="hljs-keyword">from</span> <span class="hljs-string">'./article'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Center = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  &lt;div className="comp center"&gt;
+    The latest news:
+    &lt;Article text="Superman spotted again!"/&gt;
+    &lt;Article text="Inside Batman's brain"/&gt;
+    &lt;Article text="'All lies', claims Spiderman"/&gt;
+  &lt;/div&gt;
+);
+</code></pre><pre id='footer_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Footer = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"comp footer"</span>&gt;</span>© The Tattler 2016<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre><pre id='link_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Link = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"comp link"</span>&gt;</span>{props.text}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre><pre id='main_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Navigation} <span class="hljs-keyword">from</span> <span class="hljs-string">'./navigation'</span>;
+<span class="hljs-keyword">import</span> {Center} <span class="hljs-keyword">from</span> <span class="hljs-string">'./center'</span>;
+<span class="hljs-keyword">import</span> {Sidebar} <span class="hljs-keyword">from</span> <span class="hljs-string">'./sidebar'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Main = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"comp main"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Navigation</span>/&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Center</span>/&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Sidebar</span>/&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre><pre id='navigation_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Link} <span class="hljs-keyword">from</span> <span class="hljs-string">'./link'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Navigation = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  &lt;div className="comp nav"&gt;
+    Tattler sections:
+    &lt;Link text="Latest news"/&gt;
+    &lt;Link text="Exposé"/&gt;
+    &lt;Link text="Interviews"/&gt;
+    &lt;Link text="About the Tattler"/&gt;
+  &lt;/div&gt;
+);
+</code></pre><pre id='sidebar_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Advert} <span class="hljs-keyword">from</span> <span class="hljs-string">'./advert'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Sidebar = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  &lt;div className="comp side"&gt;
+    Support the Tattler, check out these ads!
+    &lt;Advert text="Get an evening with Captain America"/&gt;
+    &lt;Advert text="Trouble sleeping? Never again!"/&gt;
+    &lt;Advert text="Wanna get ribbed like Batman?"/&gt;
+  &lt;/div&gt;
+);
+</code></pre><pre id='site_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Topbar} <span class="hljs-keyword">from</span> <span class="hljs-string">'./topbar'</span>;
+<span class="hljs-keyword">import</span> {Main} <span class="hljs-keyword">from</span> <span class="hljs-string">'./main'</span>;
+<span class="hljs-keyword">import</span> {Footer} <span class="hljs-keyword">from</span> <span class="hljs-string">'./footer'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Site = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"comp site"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Topbar</span>/&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Main</span>/&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Footer</span>/&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre><pre id='styles_css-source'><code><span class="hljs-selector-class">.comp</span> {
+	<span class="hljs-attribute">display</span>: block;
+	<span class="hljs-attribute">border-radius</span>: <span class="hljs-number">3px</span>;
+	<span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> dashed black;
+	<span class="hljs-attribute">padding</span>: <span class="hljs-number">7px</span>;
+	<span class="hljs-attribute">margin</span>: <span class="hljs-number">7px</span>;
+	<span class="hljs-attribute">text-align</span>: center;
+}
+
+<span class="hljs-selector-class">.site</span> {
+	<span class="hljs-attribute">display</span>: flex;
+	<span class="hljs-attribute">flex-direction</span>: column;
+	<span class="hljs-attribute">background-color</span>: <span class="hljs-number">#D8EDD1</span>;
+}
+
+<span class="hljs-selector-class">.top</span>, <span class="hljs-selector-class">.footer</span>, <span class="hljs-selector-class">.main</span> {
+	<span class="hljs-attribute">background-color</span>: <span class="hljs-number">#D1E6ED</span>;
+}
+
+<span class="hljs-selector-class">.main</span> {
+	<span class="hljs-attribute">display</span>: flex;
+	<span class="hljs-attribute">flex-direction</span>: row;
+}
+
+<span class="hljs-selector-class">.center</span>, <span class="hljs-selector-class">.nav</span>, <span class="hljs-selector-class">.side</span> {
+	<span class="hljs-attribute">background-color</span>: <span class="hljs-number">#EDD8D1</span>;
+}
+
+<span class="hljs-selector-class">.articleitem</span>, <span class="hljs-selector-class">.link</span>, <span class="hljs-selector-class">.advert</span> {
+	<span class="hljs-attribute">background-color</span>: <span class="hljs-number">#F2DF91</span>;
+}</code></pre><pre id='topbar_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Topbar = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"comp top"</span>&gt;</span>The Superhero Tattler<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+);
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

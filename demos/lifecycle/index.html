@@ -1,0 +1,125 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="lifecycle">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating lifecycle methods. The parent component will update after 1 second, also causing a cascading update in the child. Then, after another second, the parent will update again causing the child to be removed.</p>
+
+<p>Every lifecycle function in both components will log to the console when they&#39;re called, so check there to see the result from the above changes.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='child_js'>child.js</div><div data-file='parent_js'>parent.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> { Parent } <span class="hljs-keyword">from</span> <span class="hljs-string">'./parent'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Parent</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='child_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Child</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child constructor"</span>);
+  }
+  <span class="hljs-keyword">static</span> getDerivedStateFromProps(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child getDerivedStateFromProps"</span>); <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;}
+  componentDidMount(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child componentDidMount"</span>); }
+  getSnapshotBeforeUpdate(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child getSnapshotBeforeUpdate"</span>); <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
+  componentDidUpdate(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child componentDidUpdate"</span>); }
+  shouldComponentUpdate(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child shouldComponentUpdate"</span>); <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; }
+  componentWillUnmount(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child componentWillUnmount"</span>); }
+  render() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child render"</span>);
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Child says: {this.props.text}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+  }
+}
+</code></pre><pre id='parent_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Child} <span class="hljs-keyword">from</span> <span class="hljs-string">'./child'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Parent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">child</span>: <span class="hljs-string">"hello!"</span>};
+    <span class="hljs-keyword">this</span>.goodbye = <span class="hljs-keyword">this</span>.goodbye.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.nochild = <span class="hljs-keyword">this</span>.nochild.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Parent constructor"</span>);
+  }
+  <span class="hljs-keyword">static</span> getDerivedStateFromProps(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Parent getDerivedStateFromProps"</span>); <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
+  getSnapshotBeforeUpdate(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Parent getSnapshotBeforeUpdate"</span>); <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>; }
+  componentDidUpdate(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Parent componentDidUpdate"</span>); }
+  shouldComponentUpdate(){ <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Parent shouldComponentUpdate"</span>); <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>; }
+  componentDidMount() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Parent componentDidMount"</span>);
+    setTimeout(<span class="hljs-keyword">this</span>.goodbye,<span class="hljs-number">1000</span>);
+  }
+  goodbye() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"******** Parent's state change, causing child update **********"</span>);
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">child</span>: <span class="hljs-string">"goodbye!"</span>});
+    setTimeout(<span class="hljs-keyword">this</span>.nochild,<span class="hljs-number">1000</span>);
+  }
+  nochild() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"******** Parent changed again, removing child **********"</span>);
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">child</span>:<span class="hljs-literal">undefined</span>});
+  }
+  render() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Parent render"</span>);
+    <span class="hljs-keyword">let</span> child = <span class="hljs-keyword">this</span>.state.child;
+    <span class="hljs-keyword">return</span> child ? <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Child</span> <span class="hljs-attr">text</span>=<span class="hljs-string">{child}/</span>&gt;</span> : <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No child!<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>;
+  }
+}
+</span></code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

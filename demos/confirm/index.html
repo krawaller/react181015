@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="confirm">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating the custom confirmation button</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='confirm_js'>confirm.js</div><div data-file='form_js'>form.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Form} <span class="hljs-keyword">from</span> <span class="hljs-string">'./form'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Form</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='confirm_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Confirm</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">idle</span>: <span class="hljs-literal">true</span>};
+    <span class="hljs-keyword">this</span>.maybe = <span class="hljs-keyword">this</span>.maybe.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.changedmymind = <span class="hljs-keyword">this</span>.changedmymind.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.yesimsure = <span class="hljs-keyword">this</span>.yesimsure.bind(<span class="hljs-keyword">this</span>);
+  }
+  maybe() { <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">idle</span>: <span class="hljs-literal">false</span>}); }
+  changedmymind() { <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">idle</span>: <span class="hljs-literal">true</span>}); }
+  yesimsure() { <span class="hljs-keyword">this</span>.props.confirm(); <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">idle</span>: <span class="hljs-literal">true</span>}); }
+  render() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.props.disabled || <span class="hljs-keyword">this</span>.state.idle ? (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.maybe}</span> <span class="hljs-attr">disabled</span>=<span class="hljs-string">{this.props.disabled}</span>&gt;</span>Submit<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+    ) : (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.changedmymind}</span>&gt;</span>Cancel<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.yesimsure}</span>&gt;</span>Confirm<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>
+    );
+  }
+}
+</code></pre><pre id='form_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Confirm} <span class="hljs-keyword">from</span> <span class="hljs-string">'./confirm'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Form</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">submitted</span>:<span class="hljs-string">''</span>,<span class="hljs-attr">field</span>:<span class="hljs-string">''</span>};
+    <span class="hljs-keyword">this</span>.onConfirm = <span class="hljs-keyword">this</span>.onConfirm.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.onChange = <span class="hljs-keyword">this</span>.onChange.bind(<span class="hljs-keyword">this</span>);
+  }
+  onConfirm() {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">submitted</span>:<span class="hljs-keyword">this</span>.state.field,<span class="hljs-attr">field</span>:<span class="hljs-string">''</span>});
+  }
+  onChange(e) {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">field</span>:e.target.value});
+  }
+  render() {
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+        &lt;input value={this.state.field} onChange={this.onChange}/&gt;
+        &lt;Confirm disabled={!this.state.field} confirm={this.onConfirm}/&gt;
+        &lt;p&gt;Submitted value: {this.state.submitted}&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

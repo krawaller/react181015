@@ -1,0 +1,9 @@
+.lyrics {
+  cursor: pointer;
+  user-select: none;
+  border-radius: 5px;
+}
+
+.lyrics:hover {
+  background-color: rgb(243, 242, 222);
+}

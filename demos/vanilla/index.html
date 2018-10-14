@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="vanilla">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating how to marry React and Redux without any helper library</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='actionCreators_js'>actionCreators.js</div><div data-file='quoteform_js'>quoteform.js</div><div data-file='quotelist_js'>quotelist.js</div><div data-file='store_js'>store.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> { QuoteListContainer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./quotelist'</span>;
+<span class="hljs-keyword">import</span> { QuoteFormContainer } <span class="hljs-keyword">from</span> <span class="hljs-string">'./quoteform'</span>;
+<span class="hljs-keyword">import</span> { store } <span class="hljs-keyword">from</span> <span class="hljs-string">'./store'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">QuoteListContainer</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">QuoteFormContainer</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+store.dispatch({<span class="hljs-attr">type</span>:<span class="hljs-string">'BOGUSEVENT'</span>});
+</code></pre><pre id='actionCreators_js-source'><code><span class="hljs-keyword">import</span> { bindActionCreators } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+<span class="hljs-keyword">import</span> { store } <span class="hljs-keyword">from</span> <span class="hljs-string">'./store'</span>;
+
+<span class="hljs-keyword">const</span> actionCreators = {
+  <span class="hljs-attr">addQuote</span>: <span class="hljs-function">(<span class="hljs-params">text</span>)=&gt;</span> ({<span class="hljs-attr">type</span>:<span class="hljs-string">'ADD'</span>,<span class="hljs-attr">text</span>:text})
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> boundActionCreators = bindActionCreators(actionCreators, store.dispatch);
+</code></pre><pre id='quoteform_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> { boundActionCreators } <span class="hljs-keyword">from</span> <span class="hljs-string">'./actionCreators'</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">QuoteForm</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  submit(e){
+    <span class="hljs-keyword">this</span>.props.callback(<span class="hljs-keyword">this</span>.field.value);
+    <span class="hljs-keyword">this</span>.field.value = <span class="hljs-string">''</span>;
+    e.preventDefault();
+  }
+  render(){
+    <span class="hljs-keyword">return</span> (
+      &lt;form onSubmit={e=&gt; this.submit(e)}&gt;
+        &lt;input ref={i=&gt; this.field = i} /&gt;
+        &lt;button type='submit'&gt;Add&lt;/button&gt;
+      &lt;/form&gt;
+    );
+  }
+}
+
+export const QuoteFormContainer = props =&gt; (
+  &lt;QuoteForm callback={(q) =&gt; boundActionCreators.addQuote(q)}/&gt;
+);
+</code></pre><pre id='quotelist_js-source'><code>import React from 'react';
+
+import {store} from './store';
+
+const QuoteList = (props)=&gt; {
+  let list = props.quotes.map((q,n)=&gt; &lt;li key={n}&gt;{q}&lt;/li&gt;);
+  return (
+    &lt;div className="quoteslist"&gt;
+      &lt;h3&gt;Words of Wisdom&lt;/h3&gt;
+      &lt;ul&gt;{list}&lt;/ul&gt;
+    &lt;/div&gt;
+  );
+};
+
+export class QuoteListContainer extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {quotes: []};
+  }
+  componentDidMount(){
+    store.subscribe(() =&gt; {
+      this.setState({quotes: store.getState().quotes});
+    });
+  }
+  render(){
+    return &lt;QuoteList quotes={this.state.quotes} /&gt;;
+  }
+}
+</code></pre><pre id='store_js-source'><code><span class="hljs-keyword">import</span> { createStore } <span class="hljs-keyword">from</span> <span class="hljs-string">'redux'</span>;
+
+<span class="hljs-keyword">const</span> initialstate = {
+  <span class="hljs-attr">quotes</span>: [<span class="hljs-string">'Carpe diem'</span>]
+};
+
+<span class="hljs-keyword">const</span> reducer = <span class="hljs-function">(<span class="hljs-params">state,action</span>)=&gt;</span> {
+  <span class="hljs-keyword">switch</span>(action.type){
+  <span class="hljs-keyword">case</span> <span class="hljs-string">'ADD'</span>: <span class="hljs-keyword">return</span> {
+    ...state, <span class="hljs-comment">// not really needed since we have only 1 state key</span>
+    quotes: [...state.quotes, action.text]
+  };
+  <span class="hljs-keyword">default</span>: <span class="hljs-keyword">return</span> state;
+  }
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> store = createStore(reducer, initialstate);
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

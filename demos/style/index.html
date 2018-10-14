@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="style">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Demonstrating the inline style API</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='gang_js'>gang.js</div><div data-file='hero_js'>hero.js</div><div data-file='styles_js'>styles.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> { Gang } <span class="hljs-keyword">from</span> <span class="hljs-string">'./gang'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Gang</span> <span class="hljs-attr">list</span>=<span class="hljs-string">{[</span>'<span class="hljs-attr">Batman</span>', '<span class="hljs-attr">Superman</span>', '<span class="hljs-attr">Spiderman</span>', '<span class="hljs-attr">He-man</span>']} /&gt;</span>,
+  document.getElementById("app")
+);
+</span></code></pre><pre id='gang_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {day, night, gang} <span class="hljs-keyword">from</span> <span class="hljs-string">'./styles'</span>;
+<span class="hljs-keyword">import</span> {Hero} <span class="hljs-keyword">from</span> <span class="hljs-string">'./hero'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Gang</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">mode</span>: <span class="hljs-string">'day'</span>};
+    <span class="hljs-keyword">this</span>.toggle = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+      <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">mode</span>: <span class="hljs-keyword">this</span>.state.mode === <span class="hljs-string">'day'</span> ? <span class="hljs-string">'night'</span> : <span class="hljs-string">'day'</span>});
+    };
+  }
+  render() {
+    <span class="hljs-keyword">let</span> mode = <span class="hljs-keyword">this</span>.state.mode;
+    <span class="hljs-keyword">let</span> modeStyle = mode === <span class="hljs-string">'day'</span> ? day : night;
+    <span class="hljs-keyword">let</span> heroes = <span class="hljs-keyword">this</span>.props.list.map(<span class="hljs-function"><span class="hljs-params">h</span> =&gt;</span> (
+      &lt;Hero key={h} style={modeStyle} name={h}/&gt;
+    ));
+    return &lt;div&gt;
+      &lt;p&gt;
+        &lt;input id='mode' type='checkbox' onChange={this.toggle} checked={mode === 'night'}/&gt;
+        &lt;label htmlFor='mode'&gt;Night mode&lt;/label&gt;
+      &lt;/p&gt;
+      &lt;div style={gang}&gt;{heroes}&lt;/div&gt;
+    &lt;/div&gt;;
+  }
+}
+</code></pre><pre id='hero_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {hero} <span class="hljs-keyword">from</span> <span class="hljs-string">'./styles'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Hero = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> {
+  <span class="hljs-keyword">const</span> styles = <span class="hljs-built_in">Object</span>.assign({}, hero, props.style);
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{styles}</span>&gt;</span>{props.name}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+};
+</code></pre><pre id='styles_js-source'><code><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> gang = {
+  <span class="hljs-attr">display</span>: <span class="hljs-string">'flex'</span>, <span class="hljs-attr">justifyContent</span>: <span class="hljs-string">'space-around'</span>
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> hero = {
+  <span class="hljs-attr">borderRadius</span>: <span class="hljs-string">'8px'</span>,
+  <span class="hljs-attr">borderSize</span>: <span class="hljs-string">'5px'</span>,
+  <span class="hljs-attr">margin</span>: <span class="hljs-string">'3px'</span>,
+  <span class="hljs-attr">display</span>: <span class="hljs-string">'flex'</span>,
+  <span class="hljs-attr">justifyContent</span>: <span class="hljs-string">'center'</span>,
+  <span class="hljs-attr">width</span>: <span class="hljs-string">'100px'</span>,
+  <span class="hljs-attr">height</span>: <span class="hljs-string">'100px'</span>,
+  <span class="hljs-attr">alignItems</span>: <span class="hljs-string">'center'</span>,
+  <span class="hljs-attr">fontWeight</span>: <span class="hljs-string">'bold'</span>,
+  <span class="hljs-attr">transition</span>: <span class="hljs-string">'color 1s, background-color 1s'</span>
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> day = {
+  <span class="hljs-attr">color</span>: <span class="hljs-string">'black'</span>,
+  <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">'white'</span>,
+  <span class="hljs-attr">borderColor</span>: <span class="hljs-string">'#AAA'</span>
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> night = {
+  <span class="hljs-attr">color</span>: <span class="hljs-string">'white'</span>,
+  <span class="hljs-attr">backgroundColor</span>: <span class="hljs-string">'#285666'</span>,
+  <span class="hljs-attr">borderColor</span>: <span class="hljs-string">'#E6B863'</span>
+};
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+.word {
+  border: 1px solid #AAA;
+  margin-right: 1em;
+}
+.hover {
+  margin-top: 1em;
+  height: 120px;
+  width: 120px;
+  color: white;
+  background-color: green;
+}
+.hover.active {
+  background-color: red;
+}

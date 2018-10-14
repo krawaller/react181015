@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="communication">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Showing how to send and receive data between parent and child components</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='child_js'>child.js</div><div data-file='parent_js'>parent.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Parent} <span class="hljs-keyword">from</span> <span class="hljs-string">'./parent'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Parent</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='child_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Child = <span class="hljs-function"><span class="hljs-params">props</span> =&gt;</span> {
+  <span class="hljs-keyword">let</span> correctAnswer = props.number + <span class="hljs-number">1</span>;
+  <span class="hljs-keyword">let</span> cb = props.reply;
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Child: <span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span>=&gt;</span> cb(correctAnswer)}&gt;{correctAnswer}!<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span>=&gt;</span> cb(correctAnswer+1)}&gt;{correctAnswer+1}!<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+};
+</code></pre><pre id='parent_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Child} <span class="hljs-keyword">from</span> <span class="hljs-string">'./child'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Parent</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">count</span>:<span class="hljs-number">1</span>, <span class="hljs-attr">feedback</span>: <span class="hljs-string">"Let's begin!"</span>};
+    <span class="hljs-keyword">this</span>.receiveAnswer = <span class="hljs-keyword">this</span>.receiveAnswer.bind(<span class="hljs-keyword">this</span>);
+  }
+  receiveAnswer(answer) {
+    <span class="hljs-keyword">if</span> (answer === <span class="hljs-keyword">this</span>.state.count + <span class="hljs-number">1</span>){
+      <span class="hljs-keyword">this</span>.setState({
+        <span class="hljs-attr">count</span>: <span class="hljs-keyword">this</span>.state.count+<span class="hljs-number">1</span>,
+        <span class="hljs-attr">feedback</span>: <span class="hljs-string">'Good! Lets try the next one:'</span>
+      });
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">this</span>.setState({
+        <span class="hljs-attr">feedback</span>: <span class="hljs-string">'No, try again!'</span>
+      });
+    }
+  }
+  render() {
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Parent:<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> {this.state.feedback} What comes after {this.state.count}?
+        <span class="hljs-tag">&lt;<span class="hljs-name">hr</span>/&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">Child</span> <span class="hljs-attr">reply</span>=<span class="hljs-string">{this.receiveAnswer}</span> <span class="hljs-attr">number</span>=<span class="hljs-string">{this.state.count}/</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    );
+  }
+}
+</span></code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

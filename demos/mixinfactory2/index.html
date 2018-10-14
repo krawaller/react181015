@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="mixinfactory2">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Redoing the lifecycle demo using a mixin factory to reduce code duplication</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='child_js'>child.js</div><div data-file='mixin_js'>mixin.js</div><div data-file='parent_js'>parent.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> { Parent } <span class="hljs-keyword">from</span> <span class="hljs-string">'./parent'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Parent</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='child_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> createReactClass <span class="hljs-keyword">from</span> <span class="hljs-string">'create-react-class'</span>;
+
+<span class="hljs-keyword">import</span> {makeLogMixin} <span class="hljs-keyword">from</span> <span class="hljs-string">'./mixin'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Child = createReactClass({
+  <span class="hljs-attr">mixins</span>: [makeLogMixin({
+    <span class="hljs-attr">name</span>: <span class="hljs-string">"Child"</span>,
+    <span class="hljs-attr">withReturns</span>: {
+      <span class="hljs-attr">getInitialState</span>: {},
+      <span class="hljs-attr">getDefaultProps</span>: {},
+      <span class="hljs-attr">shouldComponentUpdate</span>: <span class="hljs-literal">true</span>
+    },
+    <span class="hljs-attr">functions</span>: [
+      <span class="hljs-string">"componentWillMount"</span>,<span class="hljs-string">"componentDidMount"</span>,<span class="hljs-string">"componentWillReceiveProps"</span>,
+      <span class="hljs-string">"componentWillUpdate"</span>,<span class="hljs-string">"componentDidUpdate"</span>,<span class="hljs-string">"componentWillUnmount"</span>
+    ]
+  })],
+  render() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Child render"</span>);
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Child says: {this.props.text}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+  }
+});
+</code></pre><pre id='mixin_js-source'><code><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeLogMixin</span>(<span class="hljs-params">opts</span>) </span>{
+  <span class="hljs-keyword">let</span> ret = {};
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">let</span> fn <span class="hljs-keyword">in</span> opts.withReturns){
+    ret[fn] = <span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span> {
+      <span class="hljs-built_in">console</span>.log(opts.name,fn,<span class="hljs-string">"returning"</span>,opts.withReturns[fn]);
+      <span class="hljs-keyword">return</span> opts.withReturns[fn];
+    };
+  }
+  opts.functions.forEach(<span class="hljs-function">(<span class="hljs-params">fn</span>)=&gt;</span> {
+    ret[fn] = <span class="hljs-function"><span class="hljs-params">()</span>=&gt;</span> <span class="hljs-built_in">console</span>.log(opts.name,fn);
+  });
+  <span class="hljs-keyword">return</span> ret;
+}
+</code></pre><pre id='parent_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> createReactClass <span class="hljs-keyword">from</span> <span class="hljs-string">'create-react-class'</span>;
+
+<span class="hljs-keyword">import</span> {makeLogMixin} <span class="hljs-keyword">from</span> <span class="hljs-string">'./mixin'</span>;
+<span class="hljs-keyword">import</span> {Child} <span class="hljs-keyword">from</span> <span class="hljs-string">'./child'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Parent = createReactClass({
+  <span class="hljs-attr">mixins</span>: [makeLogMixin({
+    <span class="hljs-attr">name</span>: <span class="hljs-string">"Parent"</span>,
+    <span class="hljs-attr">withReturns</span>: {
+      <span class="hljs-attr">getInitialState</span>: {<span class="hljs-attr">child</span>: <span class="hljs-string">"hello!"</span>},
+      <span class="hljs-attr">getDefaultProps</span>: {},
+      <span class="hljs-attr">shouldComponentUpdate</span>: <span class="hljs-literal">true</span>
+    },
+    <span class="hljs-attr">functions</span>: [
+      <span class="hljs-string">"componentWillMount"</span>,<span class="hljs-string">"componentDidMount"</span>,<span class="hljs-string">"componentWillReceiveProps"</span>,
+      <span class="hljs-string">"componentWillUpdate"</span>,<span class="hljs-string">"componentDidUpdate"</span>
+    ]
+  })],
+  componentDidMount() {
+    setTimeout(<span class="hljs-keyword">this</span>.goodbye,<span class="hljs-number">1000</span>);
+  },
+  goodbye() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"******** Parent's state change, causing child update **********"</span>);
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">child</span>: <span class="hljs-string">"goodbye!"</span>});
+    setTimeout(<span class="hljs-keyword">this</span>.nochild,<span class="hljs-number">1000</span>);
+  },
+  nochild() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"******** Parent changed again, removing child **********"</span>);
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">child</span>:<span class="hljs-literal">undefined</span>});
+  },
+  render() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">"Parent render"</span>);
+    <span class="hljs-keyword">let</span> child = <span class="hljs-keyword">this</span>.state.child;
+    <span class="hljs-keyword">return</span> child ? <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Child</span> <span class="hljs-attr">text</span>=<span class="hljs-string">{child}/</span>&gt;</span> : <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>No child!<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>;
+  }
+});
+</span></code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+	<title>Exercise: 04_generator 2</title>
+	<script type="text/javascript" src="../libs/browserassets.js"></script>
+	<script type="text/javascript" src="../libs/babel.js"></script>
+  <script type="text/javascript" src="../libs/jquery.js"></script>
+  <link rel="stylesheet" href="../libs/all.css">
+  <link rel="stylesheet" href="../libs/exercise.css">
+</head>
+<body>
+  <div class='topbar'><div>Edument React course &nbsp;&nbsp;&nbsp;&nbsp;<a href='../'>Exercises</a> - <span>04_generator</span></div></div>
+  <div class="wrapper">
+  <div class="exercise">
+    <div class="instruction">
+<h3>04_GENERATOR 2</h3>
+
+<ul class='partnav'><li class=''><a href='index.html' >Part 1</a></li><li class='active'><a href='part2.html' >Part 2</a></li><li class=''><a href='part3.html' >Part 3</a></li><li class=''><a href='part4.html' >Part 4</a></li></ul>
+
+<p>In this step we increase the challenge by <strong>adding an intelligence slider</strong>! This increases the complexity since we can no longer represent our state as a single number - instead we must use an object.</p>
+
+<p>Don&#39;t worry about the intelligence code being very similar to the strength code - we don&#39;t need to refactor that now, instead focus on just making the state into an object. So add another action creator for the intelligence, and another case to the reducer.</p>
+
+<p>Remember the <strong>useful ES6 trick</strong>: To create a new object from an old one but with additional props, do this: <code>let newobj = {...oldobj, newprop: newval}</code>;</p>
+
+    </div>
+    <div class="apps">
+     <div>
+      <h4>Your version</h4>
+      <div id="target"></div>
+     </div>
+     <div>
+      <h4>Solution</h4>
+      <iframe class="solution" srcdoc="<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>Solution</title>
+  <script type='text/javascript' src='../libs/browserassets.js'></script>
+  <script type='text/javascript' src='../libs/babel.js'></script>
+  <script type='text/javascript' src='../libs/jquery.js'></script>
+</head>
+<body>
+  <div id='target'></div>
+<script type='text/babel' src='solution2.js'></script>
+</body>
+</html>
+"></iframe>
+      </div>
+    </div>
+  </div>
+  </div>
+<script type="text/babel" src="yourcode2.js"></script>
+
+</body>
+</html>

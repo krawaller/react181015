@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body data-demoid="es6class">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Showing off the class component syntax.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='song_js'>song.js</div><div data-file='styles_css'>styles.css</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Song} <span class="hljs-keyword">from</span> <span class="hljs-string">'./song'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h4</span>&gt;</span>Sing along! (by clicking the lyrics)<span class="hljs-tag">&lt;/<span class="hljs-name">h4</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Song</span> <span class="hljs-attr">singular</span>=<span class="hljs-string">"bottle of beer"</span> <span class="hljs-attr">plural</span>=<span class="hljs-string">"bottles of beer"</span>/&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>,
+  document.getElementById("app")
+);
+</span></code></pre><pre id='song_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Song</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props) {
+    <span class="hljs-keyword">super</span>(props); <span class="hljs-comment">// because we must</span>
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">count</span>:<span class="hljs-number">1</span>};
+    <span class="hljs-keyword">this</span>.increase = <span class="hljs-keyword">this</span>.increase.bind(<span class="hljs-keyword">this</span>);
+  }
+  increase() {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">count</span>: <span class="hljs-keyword">this</span>.state.count+<span class="hljs-number">1</span>});
+  }
+  render() {
+    <span class="hljs-keyword">let</span> now = <span class="hljs-keyword">this</span>.state.count,
+      txt = <span class="hljs-keyword">this</span>.props[now === <span class="hljs-number">1</span> ? <span class="hljs-string">"singular"</span> : <span class="hljs-string">"plural"</span>];
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">"lyrics"</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.increase}</span>&gt;</span>{now+' '+txt}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+  }
+}
+</code></pre><pre id='styles_css-source'><code><span class="hljs-selector-class">.lyrics</span> {
+  <span class="hljs-attribute">cursor</span>: pointer;
+  <span class="hljs-attribute">user-select</span>: none;
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">5px</span>;
+}
+
+<span class="hljs-selector-class">.lyrics</span><span class="hljs-selector-pseudo">:hover</span> {
+  <span class="hljs-attribute">background-color</span>: <span class="hljs-built_in">rgb</span>(243, 242, 222);
+}</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

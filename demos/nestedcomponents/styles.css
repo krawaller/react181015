@@ -1,0 +1,31 @@
+.comp {
+	display: block;
+	border-radius: 3px;
+	border: 1px dashed black;
+	padding: 7px;
+	margin: 7px;
+	text-align: center;
+}
+
+.site {
+	display: flex;
+	flex-direction: column;
+	background-color: #D8EDD1;
+}
+
+.top, .footer, .main {
+	background-color: #D1E6ED;
+}
+
+.main {
+	display: flex;
+	flex-direction: row;
+}
+
+.center, .nav, .side {
+	background-color: #EDD8D1;
+}
+
+.articleitem, .link, .advert {
+	background-color: #F2DF91;
+}

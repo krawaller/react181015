@@ -1,0 +1,25 @@
+.poll {
+	background-color: #DDD;
+  margin: 1em;
+  padding: 1em;
+  border-radius: 5px;
+}
+
+.poll li {
+  cursor: pointer;
+}
+
+.poll li:hover {
+  background-color: yellow;
+}
+
+.poll li.chosen {
+	background-color: green;
+	color: white;
+}
+
+.survey:after {
+	content: " ";
+	display: block;
+	clear: both;
+}

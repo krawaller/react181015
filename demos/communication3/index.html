@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="communication3">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Another example demoing communication between parent and child.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='contest_js'>contest.js</div><div data-file='racer_js'>racer.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Contest} <span class="hljs-keyword">from</span> <span class="hljs-string">'./contest'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Contest</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='contest_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {Racer} <span class="hljs-keyword">from</span> <span class="hljs-string">'./racer'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Contest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = {<span class="hljs-attr">clicked1</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">clicked2</span>: <span class="hljs-number">0</span>};
+    <span class="hljs-keyword">this</span>.onClick1 = <span class="hljs-keyword">this</span>.onClick1.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.onClick2 = <span class="hljs-keyword">this</span>.onClick2.bind(<span class="hljs-keyword">this</span>);
+  }
+  onClick1() {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">clicked1</span>: <span class="hljs-keyword">this</span>.state.clicked1+<span class="hljs-number">1</span>});
+  }
+  onClick2() {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">clicked2</span>: <span class="hljs-keyword">this</span>.state.clicked2+<span class="hljs-number">1</span>});
+  }
+  render() {
+    <span class="hljs-keyword">let</span> c1 = <span class="hljs-keyword">this</span>.state.clicked1;
+    <span class="hljs-keyword">let</span> c2 = <span class="hljs-keyword">this</span>.state.clicked2;
+    <span class="hljs-keyword">let</span> msg = <span class="hljs-string">"Let the race begin!"</span>;
+    <span class="hljs-keyword">if</span> (c1 &lt; c2){
+      msg = <span class="hljs-string">"Racer 2 is in the lead!"</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (c1 &gt; c2) {
+      msg = <span class="hljs-string">"Racer 1 is winning!"</span>;
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (c1){
+      msg = <span class="hljs-string">"The racers are tied!"</span>;
+    }
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+        &lt;h4&gt;State demo&lt;/h4&gt;
+        &lt;Racer name="1" move={this.onClick1} position={c1}/&gt;&lt;br/&gt;
+        &lt;Racer name="2" move={this.onClick2} position={c2}/&gt;
+        &lt;p&gt;{msg}&lt;/p&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+</code></pre><pre id='racer_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> Racer = <span class="hljs-function">(<span class="hljs-params">props</span>)=&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{props.move}</span>&gt;</span>
+    Racer {props.name} has moved {props.position} steps
+  <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span>
+);
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

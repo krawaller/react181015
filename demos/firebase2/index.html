@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script>document.write('<base href="' + document.location + '" />');</script>
+  <title>Demo</title>
+
+  <link rel="stylesheet" href="../lib/basic.css">
+  <link rel="stylesheet" href="../lib/codestyle.css">
+  
+</head>
+
+<body data-demoid="firebase2">
+  <div class="wrapper">
+    <div>
+      <a href="../index.html">&larr; back to demo index</a>
+      <div><p>Another Firebase example, this time with different rooms to chat in.</p></div>
+      <div>
+        <div id="app">loading...</div>
+      </div>
+    </div>
+    <div class="sources">
+      <div class="sourcenav"><div data-file='app_js'>app.js</div><div data-file='babble_js'>babble.js</div><div data-file='chat_js'>chat.js</div><div data-file='chatdb_js'>chatdb.js</div><div data-file='lobby_js'>lobby.js</div></div>
+      <div class="sourcefiles"><pre id='app_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+
+<span class="hljs-keyword">import</span> {Chat} <span class="hljs-keyword">from</span> <span class="hljs-string">'./chat'</span>;
+
+ReactDOM.render(
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Chat</span>/&gt;</span></span>,
+  <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"app"</span>)
+);
+</code></pre><pre id='babble_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Babble</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.addMsg = <span class="hljs-keyword">this</span>.addMsg.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.leave = <span class="hljs-keyword">this</span>.leave.bind(<span class="hljs-keyword">this</span>);
+  }
+  addMsg(e) {
+    <span class="hljs-keyword">this</span>.props.addMsg(<span class="hljs-keyword">this</span>.chat.value);
+    <span class="hljs-keyword">this</span>.chat.value = <span class="hljs-string">''</span>;
+    e.preventDefault();
+  }
+  leave() {
+    <span class="hljs-keyword">this</span>.props.set(<span class="hljs-string">''</span>,<span class="hljs-string">''</span>);
+  }
+  render() {
+    <span class="hljs-keyword">let</span> msgs = <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>.props.msgs).map(<span class="hljs-function"><span class="hljs-params">id</span>=&gt;</span> {
+      <span class="hljs-keyword">let</span> msg = <span class="hljs-keyword">this</span>.props.msgs[id];
+      <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{id}</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>{msg.name}: <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>{msg.msg}<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span></span>;
+    }).reverse();
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.leave}</span>&gt;</span>Leave<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">{this.addMsg}</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">{el</span>=&gt;</span>this.chat = el}&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">input</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span>&gt;</span>Chat<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>{msgs}<span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+  }
+}
+</code></pre><pre id='chat_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">import</span> {chatDB} <span class="hljs-keyword">from</span> <span class="hljs-string">'./chatdb'</span>;
+<span class="hljs-keyword">import</span> {Babble} <span class="hljs-keyword">from</span> <span class="hljs-string">'./babble'</span>;
+<span class="hljs-keyword">import</span> {Lobby} <span class="hljs-keyword">from</span> <span class="hljs-string">'./lobby'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Chat</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.state = { <span class="hljs-attr">name</span>: <span class="hljs-string">''</span>, <span class="hljs-attr">room</span>: <span class="hljs-string">''</span>, <span class="hljs-attr">data</span>: {} };
+    <span class="hljs-keyword">this</span>.set = <span class="hljs-keyword">this</span>.set.bind(<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">this</span>.addMsg = <span class="hljs-keyword">this</span>.addMsg.bind(<span class="hljs-keyword">this</span>);
+  }
+  componentDidMount() {
+    chatDB.on(<span class="hljs-string">'value'</span>,(snapshot)=&gt; {
+      <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">data</span>: snapshot.val() || {}});
+    });
+  }
+  set(room,name) {
+    <span class="hljs-keyword">this</span>.setState({<span class="hljs-attr">room</span>:room,<span class="hljs-attr">name</span>:name});
+  }
+  addMsg(msg) {
+    chatDB.child(<span class="hljs-keyword">this</span>.state.room).push({<span class="hljs-attr">name</span>:<span class="hljs-keyword">this</span>.state.name,<span class="hljs-attr">msg</span>:msg});
+  }
+  render() {
+    <span class="hljs-keyword">let</span> s = <span class="hljs-keyword">this</span>.state, Where = s.room ? Babble : Lobby;
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>Our amazing chat app<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">Where</span> <span class="hljs-attr">set</span>=<span class="hljs-string">{this.set}</span> <span class="hljs-attr">msgs</span>=<span class="hljs-string">{s.data[s.room]}</span> <span class="hljs-attr">addMsg</span>=<span class="hljs-string">{this.addMsg}</span> /&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>;
+  }
+}
+</span></code></pre><pre id='chatdb_js-source'><code><span class="hljs-keyword">import</span> firebase <span class="hljs-keyword">from</span> <span class="hljs-string">'firebase'</span>;
+
+firebase.initializeApp({
+  <span class="hljs-attr">apiKey</span>: <span class="hljs-string">"AIzaSyCMxaH4vKLmnq963uCyL6B2j6JH19ZZKA0"</span>,
+  <span class="hljs-attr">databaseURL</span>: <span class="hljs-string">"https://ed-firebase-demo.firebaseio.com"</span>
+});
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> chatDB = firebase.database().ref(<span class="hljs-string">"rooms"</span>);
+</code></pre><pre id='lobby_js-source'><code><span class="hljs-keyword">import</span> React <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Lobby</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props){
+    <span class="hljs-keyword">super</span>(props);
+    <span class="hljs-keyword">this</span>.enter = <span class="hljs-keyword">this</span>.enter.bind(<span class="hljs-keyword">this</span>);
+  }
+  enter(e) {
+    <span class="hljs-keyword">let</span> name = <span class="hljs-keyword">this</span>.name.value,
+      room = <span class="hljs-keyword">this</span>.room.value;
+    <span class="hljs-keyword">if</span> (name &amp;&amp; room){
+      <span class="hljs-keyword">this</span>.props.set(room,name);
+    } <span class="hljs-keyword">else</span> {
+      alert(<span class="hljs-string">"You must enter a name and a room!"</span>);
+    }
+    e.preventDefault();
+  }
+  render() {
+    <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">{this.enter}</span>&gt;</span>
+      Name: <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">{el</span>=&gt;</span>this.name = el}&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">input</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">br</span>/&gt;</span>
+      Room: <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">ref</span>=<span class="hljs-string">{el</span>=&gt;</span>this.room = el}&gt;<span class="hljs-tag">&lt;/<span class="hljs-name">input</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">br</span>/&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span>&gt;</span>Enter<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></span>;
+  }
+}
+</code></pre></div>
+    </div>
+  </div>
+  <script>
+
+  function select(id){
+    let button = document.querySelector(`[data-file=${id}]`);
+    if (button){
+      document.querySelectorAll('.sources .active').forEach(function(elem){
+        elem.classList.remove('active')
+      });
+      button.classList.add('active');
+      document.getElementById(id + '-source').classList.add('active');
+    } else {
+      console.log("Warning, couldn't find source file", id);
+    }
+  }
+
+  document.querySelectorAll('.sourcenav > *').forEach(
+    elem => elem.addEventListener('click', function(e){
+      location.hash = '#' + this.getAttribute("data-file");
+      e.preventDefault();
+    })
+  );
+
+  window.addEventListener("hashchange", function(){
+    select(location.hash.replace('#',''));
+  });
+
+  select( (location.hash || '').replace('#','') || 'app_js' );
+
+  </script>
+
+  <script src="../lib/bundle.js"></script>
+</body>
+
+</html>

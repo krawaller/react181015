@@ -1,0 +1,23 @@
+.hero {
+  border-radius: 8px;
+  margin: 3px;
+	display: flex;
+	justify-content: center;
+	width: 100px;
+	height: 100px;
+	align-items: center;
+	font-weight: bold;
+	transition: color 1s, background-color 1s;
+}
+
+.day {
+	color: black;
+	background-color: white;
+	border-color: #AAA;
+}
+
+.night {
+	color: white;
+	background-color: #285666;
+	border-color: #E6B863;
+}
